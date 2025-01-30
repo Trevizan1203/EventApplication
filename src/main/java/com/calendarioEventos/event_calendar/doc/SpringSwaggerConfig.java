@@ -33,8 +33,9 @@ public class SpringSwaggerConfig {
                         .url("https://github.com/Trevizan1203/ProjetoRedeSocial"))
                 .tags(
                         Arrays.asList(
-                                new Tag().name("User").description("Requisicoes de Users"),
-                                new Tag().name("Login").description("Requisicoes de Login")
+                                new Tag().name("Usuarios").description("Requisicoes de Usuarios"),
+                                new Tag().name("Login").description("Requisicoes de Login"),
+                                new Tag().name("Eventos").description("Requisicoes de Eventos")
                         )
                 )
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
