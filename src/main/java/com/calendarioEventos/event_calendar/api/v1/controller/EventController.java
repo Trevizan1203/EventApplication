@@ -8,10 +8,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Tag(name = "Eventos")
 @RestController
@@ -32,4 +31,22 @@ public class EventController {
         eventService.createEvent(dto, token);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "Delecao de evento")
+    @DeleteMapping("/delete")
+    @Transactional
+    public ResponseEntity<Void> deleteEvent(UUID eventId, JwtAuthenticationToken token) {
+        eventService.deleteEventById(eventId, token);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Atualizacao de evento")
+    @PutMapping("/update")
+    @Transactional
+    public ResponseEntity<Void> updateEvent(UUID eventId,@RequestBody EventDTO dto, JwtAuthenticationToken token) {
+        eventService.updateEvent(eventId, dto, token);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

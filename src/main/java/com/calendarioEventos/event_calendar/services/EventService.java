@@ -2,6 +2,7 @@ package com.calendarioEventos.event_calendar.services;
 
 import com.calendarioEventos.event_calendar.api.v1.controller.DTO.EventDTO;
 import com.calendarioEventos.event_calendar.entities.Event;
+import com.calendarioEventos.event_calendar.entities.User;
 import com.calendarioEventos.event_calendar.repository.EventRepository;
 import com.calendarioEventos.event_calendar.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,37 @@ public class EventService {
         event.setDescricao(dto.descricao());
         event.setHoraInicio(converterData(dto.horaDeInicio()));
         event.setHoraTermino(converterData(dto.horaDeFim()));
+
+        eventRepository.save(event);
+    }
+
+    public void deleteEventById(UUID eventId, JwtAuthenticationToken token) {
+        var user = userRepository.findById(UUID.fromString(token.getName()));
+        if(user.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario nao encontrado");
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento nao encontrado"));
+
+        if(!event.getUsuario().getId().equals(user.get().getId()))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario logado é diferente do usuário que o evento pertence");
+
+        eventRepository.delete(event);
+    }
+
+    public void updateEvent(UUID eventId, @RequestBody EventDTO dto, JwtAuthenticationToken token) {
+        var user = userRepository.findById(UUID.fromString(token.getName()));
+        if(user.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario nao encontrado");
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento nao encontrado"));
+
+        if(!event.getUsuario().getId().equals(user.get().getId()))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario logado é diferente do usuário que o evento pertence");
+
+        if(!dto.horaDeInicio().isBlank())
+            event.setHoraInicio(converterData(dto.horaDeInicio()));
+        if(!dto.horaDeFim().isBlank())
+            event.setHoraTermino(converterData(dto.horaDeFim()));
+        if(!dto.descricao().isBlank())
+            event.setDescricao(dto.descricao());
 
         eventRepository.save(event);
     }
