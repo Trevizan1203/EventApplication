@@ -6,6 +6,7 @@ import com.calendarioEventos.event_calendar.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,6 +39,19 @@ public class UserService {
         return ResponseEntity.ok().build();
     }
 
-
+    public void deleteUser(JwtAuthenticationToken token, @RequestBody CreateUser dto) {
+        var userFromDB = userRepository.findByUsername(dto.username());
+        if (userFromDB.isPresent()) {
+            if(userFromDB.get().getUsername().equalsIgnoreCase(dto.username()) && passwordEncoder.matches(dto.password(), userFromDB.get().getPassword())) {
+                userRepository.deleteById(userFromDB.get().getId());
+            }
+            else {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Credenciais Inválidas");
+            }
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario nao encontrado no banco de dados");
+        }
+    }
 
 }
