@@ -35,6 +35,18 @@ public class EventService {
         }
     }
 
+    private boolean verificaConflitoDeHorario(Event novoEvento, User user) {
+        List<Event> eventosDoUser = user.getEventos();
+
+        for(Event e : eventosDoUser) {
+            if(novoEvento.getHoraInicio().isBefore(e.getHoraTermino()) &&
+            novoEvento.getHoraTermino().isAfter(e.getHoraInicio())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void createEvent(@RequestBody EventDTO dto, JwtAuthenticationToken token) {
         var user = userRepository.findById(UUID.fromString(token.getName()));
         if(user.isEmpty())
@@ -45,7 +57,11 @@ public class EventService {
         event.setHoraInicio(converterData(dto.horaDeInicio()));
         event.setHoraTermino(converterData(dto.horaDeFim()));
 
-        eventRepository.save(event);
+        //verificacao de nao sobrescrita
+        if(verificaConflitoDeHorario(event, user.get()))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Conflito de Horarios");
+        else
+            eventRepository.save(event);
     }
 
     public void deleteEventById(UUID eventId, JwtAuthenticationToken token) {
