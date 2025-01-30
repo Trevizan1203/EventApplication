@@ -1,6 +1,6 @@
 package com.calendarioEventos.event_calendar.api.v1.controller;
 
-import com.calendarioEventos.event_calendar.api.v1.controller.DTO.CreateUser;
+import com.calendarioEventos.event_calendar.api.v1.controller.DTO.UserDTO;
 import com.calendarioEventos.event_calendar.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -29,7 +29,7 @@ public class UserController {
     @Operation(summary = "Criacao de usuario")
     @PostMapping("/create")
     @Transactional
-    public ResponseEntity<Void> createUser(@RequestBody CreateUser dto) {
+    public ResponseEntity<Void> createUser(@RequestBody UserDTO dto) {
         userService.createUser(dto);
         return ResponseEntity.ok().build();
     }
@@ -37,7 +37,7 @@ public class UserController {
     @Operation(summary = "Delecao de usuario", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/delete")
     @Transactional
-    public ResponseEntity<Void> deleteUser (@RequestBody CreateUser dto, JwtAuthenticationToken token) {
+    public ResponseEntity<Void> deleteUser (@RequestBody UserDTO dto, JwtAuthenticationToken token) {
         userService.deleteUser(token, dto);
         return ResponseEntity.ok().build();
     }
