@@ -1,5 +1,6 @@
 package com.calendarioEventos.event_calendar.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class Event {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id")
+    @JsonBackReference
     private User usuario;
 
     private String descricao;

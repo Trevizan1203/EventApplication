@@ -1,6 +1,7 @@
 package com.calendarioEventos.event_calendar.entities;
 
 import com.calendarioEventos.event_calendar.api.v1.controller.DTO.LoginRequest;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -21,7 +22,9 @@ public class User {
     private String username;
     private String password;
 
-    @OneToMany(mappedBy = "usuario")
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Event> eventos = new ArrayList<Event>();
 
     public UUID getId() {
@@ -46,6 +49,10 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Event> getEventos() {
+        return eventos;
     }
 
     public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
