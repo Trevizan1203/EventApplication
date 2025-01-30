@@ -6,12 +6,11 @@ import com.calendarioEventos.event_calendar.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@RestController
+@Component
 public class UserService {
 
     private final UserRepository userRepository;
@@ -22,7 +21,6 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("/users")
     public ResponseEntity<Void> createUser(@RequestBody CreateUser dto) {
 
         var userFromDB = userRepository.findByUsername(dto.username());
@@ -39,5 +37,7 @@ public class UserService {
 
         return ResponseEntity.ok().build();
     }
+
+
 
 }
