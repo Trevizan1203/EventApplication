@@ -4,6 +4,7 @@ import com.calendarioEventos.event_calendar.api.v1.controller.DTO.LoginRequest;
 import com.calendarioEventos.event_calendar.api.v1.controller.DTO.LoginResponse;
 import com.calendarioEventos.event_calendar.repository.UserRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 
@@ -39,9 +41,9 @@ public class TokenController {
         var user = userRepository.findByUsername(loginRequest.username());
 
         if(user.isEmpty())
-            throw new UsernameNotFoundException("Usuário nao encontrado");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario não encontrado");
         if(!user.get().isLoginCorrect(loginRequest, passwordEncoder))
-            throw new BadCredentialsException("Senha incorreta");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Senha incorreta");
 
         var now = Instant.now();
         var expiresIn = 300L; // 5 minutos
