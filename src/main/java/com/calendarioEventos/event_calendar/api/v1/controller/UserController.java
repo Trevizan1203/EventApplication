@@ -9,10 +9,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Usuarios")
 @RestController
@@ -38,7 +37,13 @@ public class UserController {
     @PostMapping("/delete")
     @Transactional
     public ResponseEntity<Void> deleteUser (@RequestBody UserDTO dto, JwtAuthenticationToken token) {
-        userService.deleteUser(token, dto);
+        userService.deleteUser(dto);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Lista de eventos do usuario", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/getlist")
+    public ResponseEntity<List> getUserEvents (JwtAuthenticationToken token) {
+        return ResponseEntity.ok(userService.findAllEventsByUser(token));
     }
 }

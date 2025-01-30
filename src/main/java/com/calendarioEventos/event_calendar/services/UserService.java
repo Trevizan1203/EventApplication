@@ -1,6 +1,7 @@
 package com.calendarioEventos.event_calendar.services;
 
 import com.calendarioEventos.event_calendar.api.v1.controller.DTO.UserDTO;
+import com.calendarioEventos.event_calendar.entities.Event;
 import com.calendarioEventos.event_calendar.entities.User;
 import com.calendarioEventos.event_calendar.repository.UserRepository;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +11,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.UUID;
 
 @Component
 public class UserService {
@@ -37,7 +41,7 @@ public class UserService {
         userRepository.save(newUser);
     }
 
-    public void deleteUser(JwtAuthenticationToken token, @RequestBody @NotNull UserDTO dto) {
+    public void deleteUser(@RequestBody @NotNull UserDTO dto) {
         var userFromDB = userRepository.findByUsername(dto.username());
         if (userFromDB.isPresent()) {
             if(userFromDB.get().getUsername().equalsIgnoreCase(dto.username()) && passwordEncoder.matches(dto.password(), userFromDB.get().getPassword())) {
@@ -51,5 +55,14 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario nao encontrado no banco de dados");
         }
     }
+
+    public List<Event> findAllEventsByUser(JwtAuthenticationToken token) {
+        var userFromDB = userRepository.findById(UUID.fromString(token.getName()));
+        if (userFromDB.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario nao encontrado");
+        }
+        return userFromDB.get().getEventos();
+    }
+
 
 }
