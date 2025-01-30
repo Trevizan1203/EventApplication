@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -76,5 +77,17 @@ public class EventService {
             event.setDescricao(dto.descricao());
 
         eventRepository.save(event);
+    }
+
+    public Event getEventByID(UUID eventId, JwtAuthenticationToken token) {
+        var user = userRepository.findById(UUID.fromString(token.getName()));
+        if (user.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario nao encontrado");
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento nao encontrado"));
+
+        if(!event.getUsuario().getId().equals(user.get().getId()))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario logado é diferente do usuário que o evento pertence");
+
+        return event;
     }
 }

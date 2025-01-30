@@ -1,6 +1,7 @@
 package com.calendarioEventos.event_calendar.api.v1.controller;
 
 import com.calendarioEventos.event_calendar.api.v1.controller.DTO.EventDTO;
+import com.calendarioEventos.event_calendar.entities.Event;
 import com.calendarioEventos.event_calendar.services.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,5 +49,10 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Leitura de evento")
+    @GetMapping("/read")
+    public ResponseEntity<Event> readEvent(UUID eventId, JwtAuthenticationToken token) {
+        return ResponseEntity.ok(eventService.getEventByID(eventId, token));
+    }
 
 }
