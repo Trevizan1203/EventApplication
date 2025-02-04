@@ -34,17 +34,17 @@ public class EventController {
     }
 
     @Operation(summary = "Delecao de evento")
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{id}")
     @Transactional
-    public ResponseEntity<Void> deleteEvent(UUID eventId, JwtAuthenticationToken token) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable("id") UUID eventId, JwtAuthenticationToken token) {
         eventService.deleteEventById(eventId, token);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Atualizacao de evento")
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     @Transactional
-    public ResponseEntity<Void> updateEvent(UUID eventId,@RequestBody EventDTO dto, JwtAuthenticationToken token) {
+    public ResponseEntity<Void> updateEvent(@PathVariable("id") UUID eventId,@RequestBody EventDTO dto, JwtAuthenticationToken token) {
         eventService.updateEvent(eventId, dto, token);
         return ResponseEntity.noContent().build();
     }

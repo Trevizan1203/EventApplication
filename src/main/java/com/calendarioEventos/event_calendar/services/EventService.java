@@ -54,8 +54,11 @@ public class EventService {
         Event event = new Event();
         event.setUsuario(user.get());
         event.setDescricao(dto.descricao());
-        event.setHoraInicio(converterData(dto.horaDeInicio()));
-        event.setHoraTermino(converterData(dto.horaDeFim()));
+        System.out.println(dto.descricao());
+        System.out.println(dto.horaInicio());
+        System.out.println(dto.horaTermino());
+        event.setHoraInicio(converterData(dto.horaInicio()));
+        event.setHoraTermino(converterData(dto.horaTermino()));
 
         //verificacao de nao sobrescrita
         if(verificaConflitoDeHorario(event, user.get()))
@@ -85,10 +88,10 @@ public class EventService {
         if(!event.getUsuario().getId().equals(user.get().getId()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario logado é diferente do usuário que o evento pertence");
 
-        if(!dto.horaDeInicio().isBlank())
-            event.setHoraInicio(converterData(dto.horaDeInicio()));
-        if(!dto.horaDeFim().isBlank())
-            event.setHoraTermino(converterData(dto.horaDeFim()));
+        if(!dto.horaInicio().isBlank())
+            event.setHoraInicio(converterData(dto.horaInicio()));
+        if(!dto.horaTermino().isBlank())
+            event.setHoraTermino(converterData(dto.horaTermino()));
         if(!dto.descricao().isBlank())
             event.setDescricao(dto.descricao());
 
